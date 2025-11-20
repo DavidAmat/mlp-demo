@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gpu-inference-demo"
+version = "0.1.0"
+description = "GPU inference demo using Metaflow and Hugging Face models"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+metaflow = "*"
+transformers = ">=4.51.0"
+accelerate = ">=0.20.3"
+boto3 = "*"
+pyyaml = "*"
+kubernetes = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

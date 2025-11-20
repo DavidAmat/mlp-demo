@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ollama-rollout
+  namespace: ollama
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      # runtimeClassName only needed if you explicitly configured GPU runtimeClass
+      # runtimeClassName: nvidia
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 11434
+          env:
+            - name: OLLAMA_HOST
+              value: "0.0.0.0:11434"
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: ollama-store
+              mountPath: /root/.ollama
+      volumes:
+        - name: ollama-store
+          persistentVolumeClaim:
+            claimName: ollama-pvc
+
+  strategy:
+    canary:
+      # Simple canary showing traffic shifting
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 30
+        - setWeight: 100

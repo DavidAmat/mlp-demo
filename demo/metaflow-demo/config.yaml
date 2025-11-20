@@ -1,0 +1,7 @@
+cities:
+  - code: NYC
+    num: 5
+  - code: LON
+    num: 3
+  - code: PAR
+    num: 4

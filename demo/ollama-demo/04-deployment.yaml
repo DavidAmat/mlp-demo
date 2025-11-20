@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      # Uncomment if you use a specific GPU runtimeClass, e.g. "nvidia"
+      # runtimeClassName: nvidia
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 11434
+          env:
+            # Make sure Ollama listens on all interfaces
+            - name: OLLAMA_HOST
+              value: "0.0.0.0:11434"
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: ollama-store
+              mountPath: /root/.ollama
+      volumes:
+        - name: ollama-store
+          persistentVolumeClaim:
+            claimName: ollama-pvc

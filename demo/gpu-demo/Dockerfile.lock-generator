@@ -1,0 +1,27 @@
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system Python (3.10) and base tools
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip python3-venv python3-dev \
+    git curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Symlink python to python3
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Install Poetry (with virtualenvs enabled)
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
+
+WORKDIR /app
+
+# Copy only pyproject.toml for dependency resolution
+COPY pyproject.toml .
+
+# Generate poetry.lock (no dependency installation)
+RUN poetry lock
+
+# Default interactive shell
+ENTRYPOINT ["/bin/bash"]

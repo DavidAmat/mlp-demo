@@ -1,0 +1,10 @@
+metaflow
+torch>=2.1.0
+transformers>=4.51.0
+accelerate>=0.20.3
+boto3
+pyyaml
+kubernetes
+numpy<2
+
+

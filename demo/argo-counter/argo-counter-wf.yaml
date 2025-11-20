@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: argo-counter-
+  namespace: argo
+spec:
+  serviceAccountName: argo
+  archiveLogs: true # Archive logs into minio
+  entrypoint: counter
+  templates:
+    - name: counter
+      container:
+        image: localhost:5000/argo-counter:latest
+        command: ["entrypoint"]
+        args: ["main"]
