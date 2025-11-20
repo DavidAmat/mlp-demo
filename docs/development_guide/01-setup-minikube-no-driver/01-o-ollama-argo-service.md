@@ -34,6 +34,11 @@ curl -s \
   -X POST http://192.168.0.112:31500/api/pull \
   -H "Content-Type: application/json" \
   -d '{"name": "qwen3-coder:latest"}' | tail -n 1
+
+curl -s \
+  -X POST http://192.168.0.112:31500/api/pull \
+  -H "Content-Type: application/json" \
+  -d '{"name": "gpt-oss:latest"}' | tail -n 1
 ```
 
 ### Check that it works
@@ -50,6 +55,16 @@ curl -s http://192.168.0.112:31500/v1/chat/completions \
   -H "Authorization: Bearer ollama" \
   -d '{
     "model": "qwen3-coder:latest",
+    "messages": [
+      { "role": "user", "content": "Explain how Kubernetes Deployments use ReplicaSets." }
+    ]
+  }' | jq
+
+curl -s http://192.168.0.112:31500/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ollama" \
+  -d '{
+    "model": "gpt-oss:latest",
     "messages": [
       { "role": "user", "content": "Explain how Kubernetes Deployments use ReplicaSets." }
     ]
