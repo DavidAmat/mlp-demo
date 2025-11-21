@@ -81,6 +81,7 @@ kubectl get svc -n argo
 kubectl config set-context --current --namespace=argo
 
 # RUN IT!!!
+# Run Argo Rollout Dashboard
 kubectl argo rollouts dashboard
 ```
 

@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: tgi-rollout
+  namespace: argo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: tgi
+  template:
+    metadata:
+      labels:
+        app: tgi
+    spec:
+      containers:
+        - name: tgi
+          image: 192.168.0.112:5000/tgi:2.4.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--model-id=/data"
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: tgi-model-storage
+              mountPath: /data
+      volumes:
+        - name: tgi-model-storage
+          persistentVolumeClaim:
+            claimName: tgi-pvc
+  strategy:
+    canary:
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 30
+        - setWeight: 100
