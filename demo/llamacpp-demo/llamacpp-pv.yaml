@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: llamacpp-pv
+  namespace: llamacpp
+spec:
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: llamacpp-hostpath
+  hostPath:
+    path: /mnt/ssd2/llamacpp
+    type: Directory

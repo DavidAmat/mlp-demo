@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: llamacpp-pvc
+  namespace: llamacpp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: llamacpp-hostpath
+  resources:
+    requests:
+      storage: 500Gi

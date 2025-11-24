@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: llamacpp-rollout
+  namespace: llamacpp
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: llamacpp
+  template:
+    metadata:
+      labels:
+        app: llamacpp
+    spec:
+      containers:
+        - name: llama-server
+          image: ghcr.io/ggml-org/llama.cpp:server-cuda
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--jinja"
+            - "-c"
+            - "0"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8033"
+            - "-hf"
+            - "ggml-org/gpt-oss-20b-GGUF"
+            - "--n-gpu-layers"
+            - "999"
+          env:
+            - name: GGML_CUDA_ENABLE_UNIFIED_MEMORY
+              value: "ON"
+          ports:
+            - containerPort: 8033
+              name: http
+          resources:
+            requests:
+              cpu: "4"
+              memory: "16Gi"
+            limits:
+              cpu: "8"
+              memory: "32Gi"
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: llama-cache
+              mountPath: /root/.cache/llama.cpp
+
+      volumes:
+        - name: llama-cache
+          persistentVolumeClaim:
+            claimName: llamacpp-pvc
+
+  strategy:
+    canary:
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 20
+        - setWeight: 100
